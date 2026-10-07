@@ -50,9 +50,20 @@ cd "$SRC_DIR/log4shell-listener"
 # Activation ou création de l'environnement virtuel python
 if [ ! -d "venv" ]; then
     echo "Installation des dépendances Python (dnslib)..."
-    python3 -m venv venv
+    if ! python3 -m venv venv; then
+        echo -e "\n❌ ERREUR : Impossible de créer l'environnement Python."
+        echo "Sur une machine Linux vierge (Ubuntu/Debian), il manque le paquet venv."
+        echo "Veuillez exécuter cette commande puis relancez le script :"
+        echo -e "\033[1;33msudo apt update && sudo apt install python3-venv python3-pip -y\033[0m\n"
+        exit 1
+    fi
+    
     source venv/bin/activate
-    pip install dnslib >/dev/null 2>&1
+    
+    if ! pip install dnslib; then
+        echo -e "\n❌ ERREUR : Impossible d'installer dnslib via pip."
+        exit 1
+    fi
 else
     source venv/bin/activate
 fi
